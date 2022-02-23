@@ -1,4 +1,6 @@
-import LottoView from './ui/LottoView';
+import LottoView from './ui/LottoView.js';
 
-const lottoView = new LottoView();
-lottoView.bindEvents();
+export default function App() {
+  const lottoView = new LottoView();
+  lottoView.bindEvents();
+}
