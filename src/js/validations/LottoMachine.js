@@ -1,4 +1,4 @@
-import { LOTTO } from '../constants/constants.js';
+import { LOTTO } from '../constants/constants';
 
 function isOverZero(money) {
   return money > 0;

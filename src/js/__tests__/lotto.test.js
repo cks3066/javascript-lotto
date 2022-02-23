@@ -1,5 +1,5 @@
-import Lotto from '../domains/Lotto.js';
-import { LOTTO } from '../constants/constants.js';
+import Lotto from '../domains/Lotto';
+import { LOTTO } from '../constants/constants';
 
 function isInRange(arr, min, max) {
   return arr.every((item) => item >= min && item <= max);
