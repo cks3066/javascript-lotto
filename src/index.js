@@ -1,5 +1,5 @@
 import './css/index.css';
 import './css/toggle.css';
-import App from './js/app.js';
+import App from './js/app';
 
 App();
