@@ -6,4 +6,6 @@ function App() {
     lottoView.bindEvents();
   });
 }
+
+App();
 export default App;
