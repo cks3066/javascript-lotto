@@ -1,11 +1,11 @@
-import LottoMachine from '../domains/LottoMachine';
-import $ from './utils';
+import LottoMachine from '../domains/LottoMachine.js';
+import $ from './utils.js';
 import {
   ticketImg,
   lottoNumberTemplate,
   purchaseMessageTemplate,
-} from './template';
-import { SELECTOR } from '../constants/constants';
+} from './template.js';
+import { SELECTOR } from '../constants/constants.js';
 
 export default class LottoView {
   constructor() {

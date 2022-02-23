@@ -1,4 +1,4 @@
-import LottoView from './ui/LottoView';
+import LottoView from './ui/LottoView.js';
 
 function App() {
   const lottoView = new LottoView();
