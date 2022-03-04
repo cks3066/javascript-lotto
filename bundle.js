@@ -66,7 +66,9 @@ var LOTTO = {
   MAXIMUM_NUMBER: 45,
   PRICE: 1000,
   NUMBER_QUANTITY: 6,
-  INPUT_LIMIT: 100000
+  INPUT_LIMIT: 100000,
+  WINNING_PRIZE: [0, 0, 0, 5000, 50000, 1500000, 2000000000],
+  WINNING_PRIZE_WITH_BONUS: 30000000
 };
 var SELECTOR = {
   ID: {
@@ -256,13 +258,19 @@ var PurchaseLottosController = /*#__PURE__*/function () {
   }
 
   _createClass(PurchaseLottosController, [{
+    key: "inputMoney",
+    value: function inputMoney() {
+      this.machine.inputMoney = _classPrivateFieldGet(this, _view).getInputMoney();
+    } // 핸들러
+
+  }, {
     key: "handlePurchaseForm",
     value: function handlePurchaseForm(event) {
       event.preventDefault();
 
       try {
         this.inputMoney();
-        this.machine.operateLottoMachine();
+        this.machine.lottos = this.machine.generateLottos();
 
         _classPrivateFieldGet(this, _view).renderPurchasedLottosAmountByText(this.machine.lottos);
 
@@ -279,11 +287,6 @@ var PurchaseLottosController = /*#__PURE__*/function () {
     key: "handleResultToggle",
     value: function handleResultToggle() {
       _classPrivateFieldGet(this, _view).renderPurchasedLottos(this.machine.lottos);
-    }
-  }, {
-    key: "inputMoney",
-    value: function inputMoney() {
-      this.machine.inputMoney = _classPrivateFieldGet(this, _view).getInputMoney();
     }
   }]);
 
@@ -497,25 +500,6 @@ var LottoMachine = /*#__PURE__*/function () {
       return _classPrivateFieldGet(this, _winLottosWithBonus);
     }
   }, {
-    key: "getProfit",
-    value: function getProfit() {
-      var winningPrize = [0, 0, 0, 5000, 50000, 1500000, 2000000000];
-      var winningPrizeWithBonus = 30000000;
-      var profit = 0;
-
-      _classPrivateFieldGet(this, _winLottos).map(function (item, index) {
-        profit += item * winningPrize[index];
-      });
-
-      profit += _classPrivateFieldGet(this, _winLottosWithBonus) * winningPrizeWithBonus;
-      return profit;
-    }
-  }, {
-    key: "operateLottoMachine",
-    value: function operateLottoMachine() {
-      _classPrivateFieldSet(this, _lottos, this.generateLottos());
-    }
-  }, {
     key: "generateLottos",
     value: function generateLottos() {
       return Array(this.lottoQuantity).fill().map(function () {
@@ -523,6 +507,18 @@ var LottoMachine = /*#__PURE__*/function () {
         lotto.numbers = lotto.pickNumbers();
         return lotto;
       });
+    }
+  }, {
+    key: "getProfit",
+    value: function getProfit() {
+      var profit = 0;
+
+      _classPrivateFieldGet(this, _winLottos).forEach(function (winLottoCount, index) {
+        profit += winLottoCount * _constants_constants_js__WEBPACK_IMPORTED_MODULE_0__.LOTTO.WINNING_PRIZE[index];
+      });
+
+      profit += _classPrivateFieldGet(this, _winLottosWithBonus) * _constants_constants_js__WEBPACK_IMPORTED_MODULE_0__.LOTTO.WINNING_PRIZE_WITH_BONUS;
+      return profit;
     }
   }, {
     key: "countWinLottos",
@@ -619,6 +615,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ validateInputWinningNumbers)
 /* harmony export */ });
+/* harmony import */ var _constants_constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../constants/constants */ "./src/js/constants/constants.js");
+
+
 function hasDuplicatedNumbers(inputWinningNumbers) {
   var set = new Set(inputWinningNumbers);
   return set.size !== inputWinningNumbers.length;
@@ -641,7 +640,7 @@ function validateInputWinningNumbers(inputWinningNumbers) {
     throw new Error('입력되지 않은 값이 있습니다.');
   }
 
-  if (!areNumbersInRange(inputWinningNumbers, 1, 45)) {
+  if (!areNumbersInRange(inputWinningNumbers, _constants_constants__WEBPACK_IMPORTED_MODULE_0__.LOTTO.MINIMUM_NUMBER, _constants_constants__WEBPACK_IMPORTED_MODULE_0__.LOTTO.MAXIMUM_NUMBER)) {
     throw new Error('1 ~ 45 사이의 숫자를 입력해주세요.');
   }
 
@@ -733,6 +732,11 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+var template = {
+  showProfitMessage: function showProfitMessage(profitRate) {
+    return "\uB2F9\uC2E0\uC758 \uCD1D \uC218\uC775\uB960\uC740 ".concat(profitRate, "%\uC785\uB2C8\uB2E4.");
+  }
+};
 
 var CheckWinningLottosView = /*#__PURE__*/function (_View) {
   _inherits(CheckWinningLottosView, _View);
@@ -764,104 +768,6 @@ var CheckWinningLottosView = /*#__PURE__*/function (_View) {
       });
       (0,_validations_CheckWinningLottos_js__WEBPACK_IMPORTED_MODULE_3__["default"])(inputWinningNumbers);
       return inputWinningNumbers;
-    }
-  }, {
-    key: "handleInputWinningNumber",
-    value: function handleInputWinningNumber(index) {
-      var elements = (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT);
-      elements[index].value = elements[index].value.substr(0, 2);
-
-      if (index < 6 && elements[index].value.length > 1) {
-        elements[index + 1].focus();
-      }
-
-      elements.forEach(function (element) {
-        return element.classList.remove('input-alert');
-      });
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.WINNING_NUMBER_INPUT_ALERT).textContent = '';
-    }
-  }, {
-    key: "handleDeleteWinningNumber",
-    value: function handleDeleteWinningNumber(event, index) {
-      var elements = (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT);
-
-      if (event.key === 'Backspace') {
-        if (index !== 0 && elements[index].value.length === 0) elements[index - 1].focus();
-        return;
-      }
-    }
-  }, {
-    key: "bindInputWinningNumberEvents",
-    value: function bindInputWinningNumberEvents() {
-      var _this2 = this;
-
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT).forEach(function (element, index) {
-        _this2.bindEvent(element, 'input', function () {
-          _this2.handleInputWinningNumber(index);
-        });
-      });
-    }
-  }, {
-    key: "bindDeleteWinningNumberEvents",
-    value: function bindDeleteWinningNumberEvents() {
-      var _this3 = this;
-
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT).forEach(function (element, index) {
-        _this3.bindEvent(element, 'keydown', function (event) {
-          _this3.handleDeleteWinningNumber(event, index);
-        });
-      });
-    }
-  }, {
-    key: "bindWinningNumberInputError",
-    value: function bindWinningNumberInputError() {
-      var _this4 = this;
-
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT).forEach(function (element) {
-        _this4.bindEvent(element, 'input', function (event) {
-          _this4.handleWinningNumberInputError(event);
-        });
-      });
-    }
-  }, {
-    key: "openModal",
-    value: function openModal() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.MODAL).classList.toggle('show');
-    }
-  }, {
-    key: "closeModal",
-    value: function closeModal() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.MODAL).classList.toggle('show');
-    }
-  }, {
-    key: "renderWinLottosCountInModal",
-    value: function renderWinLottosCountInModal(winLottos, winLottosWithBonus) {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.COINCIDE_COUNT).forEach(function (element, index) {
-        element.textContent = "".concat(winLottos[index + 3], "\uAC1C");
-      });
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.COINCIDE_COUNT_BONUS).textContent = "".concat(winLottosWithBonus, "\uAC1C");
-    }
-  }, {
-    key: "renderProfitRateInModal",
-    value: function renderProfitRateInModal(profitRate) {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.SHOW_PROFIT_RATE).textContent = "\uB2F9\uC2E0\uC758 \uCD1D \uC218\uC775\uB960\uC740 ".concat(profitRate, "%\uC785\uB2C8\uB2E4.");
-    }
-  }, {
-    key: "handleWinningNumberInputError",
-    value: function handleWinningNumberInputError(event) {
-      event.stopPropagation();
-      var elements = (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT);
-      var duplicatedLottosMap = this.getDuplicatedLottosMap(Array.from(elements));
-      var inputWinningNumbers = Array.from(elements).map(function (element) {
-        return Number.parseInt(element.value);
-      });
-
-      try {
-        (0,_validations_CheckWinningLottos_js__WEBPACK_IMPORTED_MODULE_3__["default"])(inputWinningNumbers);
-      } catch (error) {
-        this.showError(elements, duplicatedLottosMap);
-        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.WINNING_NUMBER_INPUT_ALERT).textContent = error.message;
-      }
     }
   }, {
     key: "getDuplicatedKey",
@@ -896,16 +802,39 @@ var CheckWinningLottosView = /*#__PURE__*/function (_View) {
       });
     }
   }, {
+    key: "openModal",
+    value: function openModal() {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.MODAL).classList.toggle('show');
+    }
+  }, {
+    key: "closeModal",
+    value: function closeModal() {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.MODAL).classList.toggle('show');
+    }
+  }, {
+    key: "renderWinLottosCountInModal",
+    value: function renderWinLottosCountInModal(winLottos, winLottosWithBonus) {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.COINCIDE_COUNT).forEach(function (element, index) {
+        element.textContent = "".concat(winLottos[index + 3], "\uAC1C");
+      });
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.COINCIDE_COUNT_BONUS).textContent = "".concat(winLottosWithBonus, "\uAC1C");
+    }
+  }, {
+    key: "renderProfitRateInModal",
+    value: function renderProfitRateInModal(profitRate) {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.SHOW_PROFIT_RATE).textContent = template.showProfitMessage(profitRate);
+    }
+  }, {
     key: "showError",
     value: function showError(elements, duplicatedLottosMap) {
-      var _this5 = this;
+      var _this2 = this;
 
       Array.from(elements).forEach(function (element) {
-        if (_this5.isDuplicatedElement(element, duplicatedLottosMap)) {
+        if (_this2.isDuplicatedElement(element, duplicatedLottosMap)) {
           element.classList.add('input-alert');
         }
 
-        if (element.value < 1 || element.value > 45) {
+        if (element.value < _constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.LOTTO.MINIMUM_NUMBER || element.value > _constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.LOTTO.MAXIMUM_NUMBER) {
           element.classList.add('input-alert');
         }
       });
@@ -938,6 +867,83 @@ var CheckWinningLottosView = /*#__PURE__*/function (_View) {
     key: "resetToggle",
     value: function resetToggle() {
       (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.TOGGLE_CHECKBOX).checked = false;
+    } // 핸들러
+
+  }, {
+    key: "handleInputWinningNumber",
+    value: function handleInputWinningNumber(index) {
+      var elements = (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT);
+      elements[index].value = elements[index].value.substr(0, 2);
+
+      if (index < _constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.LOTTO.NUMBER_QUANTITY && elements[index].value.length > 1) {
+        elements[index + 1].focus();
+      }
+
+      elements.forEach(function (element) {
+        return element.classList.remove('input-alert');
+      });
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.WINNING_NUMBER_INPUT_ALERT).textContent = '';
+    }
+  }, {
+    key: "handleDeleteWinningNumber",
+    value: function handleDeleteWinningNumber(event, index) {
+      var elements = (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT);
+
+      if (event.key === 'Backspace') {
+        if (index !== 0 && elements[index].value.length === 0) elements[index - 1].focus();
+        return;
+      }
+    }
+  }, {
+    key: "handleWinningNumberInputError",
+    value: function handleWinningNumberInputError(event) {
+      event.stopPropagation();
+      var elements = (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT);
+      var duplicatedLottosMap = this.getDuplicatedLottosMap(Array.from(elements));
+      var inputWinningNumbers = Array.from(elements).map(function (element) {
+        return Number.parseInt(element.value);
+      });
+
+      try {
+        (0,_validations_CheckWinningLottos_js__WEBPACK_IMPORTED_MODULE_3__["default"])(inputWinningNumbers);
+      } catch (error) {
+        this.showError(elements, duplicatedLottosMap);
+        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.WINNING_NUMBER_INPUT_ALERT).textContent = error.message;
+      }
+    } // 이벤트 등록 메서드
+
+  }, {
+    key: "bindInputWinningNumberEvents",
+    value: function bindInputWinningNumberEvents() {
+      var _this3 = this;
+
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT).forEach(function (element, index) {
+        _this3.bindEvent(element, 'input', function () {
+          _this3.handleInputWinningNumber(index);
+        });
+      });
+    }
+  }, {
+    key: "bindDeleteWinningNumberEvents",
+    value: function bindDeleteWinningNumberEvents() {
+      var _this4 = this;
+
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT).forEach(function (element, index) {
+        _this4.bindEvent(element, 'keydown', function (event) {
+          _this4.handleDeleteWinningNumber(event, index);
+        });
+      });
+    }
+  }, {
+    key: "bindWinningNumberInputError",
+    value: function bindWinningNumberInputError() {
+      var _this5 = this;
+
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT).forEach(function (element) {
+        _this5.bindEvent(element, 'input', function (event) {
+          _this5.handleWinningNumberInputError(event);
+        });
+      });
     }
   }]);
 
@@ -989,7 +995,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 var template = {
-  ticketImg: '<div>🎟️</div>',
+  ticketImg: "<div>🎟️</div>",
   lottoNumberTemplate: function lottoNumberTemplate(lottoNumber) {
     return "<div class=\"items-center\">\n              \uD83C\uDF9F\uFE0F\n             <div class=\"lotto-numbers-container\">".concat(lottoNumber, "</div>\n          </div>");
   },
@@ -1011,7 +1017,7 @@ var PurchaseLottosView = /*#__PURE__*/function (_View) {
 
     _this = _super.call(this);
 
-    _this.bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT), 'keyup', _this.handleOnChangeMoneyInput.bind(_assertThisInitialized(_this)));
+    _this.bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT), "keyup", _this.handleOnChangeMoneyInput.bind(_assertThisInitialized(_this)));
 
     return _this;
   }
@@ -1032,14 +1038,14 @@ var PurchaseLottosView = /*#__PURE__*/function (_View) {
     key: "renderPurchasedLottosByImage",
     value: function renderPurchasedLottosByImage(lottos) {
       lottos.map(function () {
-        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_CONTAINER).insertAdjacentHTML('beforeEnd', template.ticketImg);
+        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_CONTAINER).insertAdjacentHTML("beforeEnd", template.ticketImg);
       });
     }
   }, {
     key: "renderPurchasedLottosByNumbers",
     value: function renderPurchasedLottosByNumbers(lottos) {
       lottos.map(function (lotto) {
-        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_CONTAINER).insertAdjacentHTML('beforeEnd', template.lottoNumberTemplate(lotto.numbers.join(', ')));
+        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_CONTAINER).insertAdjacentHTML("beforeEnd", template.lottoNumberTemplate(lotto.numbers.join(", ")));
       });
     }
   }, {
@@ -1060,25 +1066,26 @@ var PurchaseLottosView = /*#__PURE__*/function (_View) {
       (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.WINNING_NUMBER_FORM).hidden = false;
     }
   }, {
+    key: "clearMoneyInput",
+    value: function clearMoneyInput() {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).classList.remove("input-alert");
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT_ALERT).textContent = "";
+    } // 핸들러
+
+  }, {
     key: "handleOnChangeMoneyInput",
     value: function handleOnChangeMoneyInput(event) {
       try {
         (0,_validations_PurchaseLottos_js__WEBPACK_IMPORTED_MODULE_3__["default"])(event.target.value);
         this.clearMoneyInput();
       } catch (error) {
-        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).classList.add('input-alert');
+        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).classList.add("input-alert");
         (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT_ALERT).textContent = error.message;
       }
 
       if (event.target.value.length === 0) {
         this.clearMoneyInput();
       }
-    }
-  }, {
-    key: "clearMoneyInput",
-    value: function clearMoneyInput() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).classList.remove('input-alert');
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT_ALERT).textContent = '';
     }
   }]);
 
@@ -1143,7 +1150,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "input[type='number']::-webkit-outer-spin-button,\ninput[type='number']::-webkit-inner-spin-button {\n  -webkit-appearance: none;\n  margin: 0;\n}\n\nbody {\n  display: flex;\n  justify-content: center;\n}\n\ninput:focus {\n  background-color: rgba(63, 207, 226, 0.1);\n  border: 1px solid #00bcd4;\n  outline: none;\n}\n\n.input-alert {\n  border: 1px solid tomato;\n  background-color: rgba(255, 99, 71, 0.1);\n}\n\n.input-alert:focus {\n  border: 1px solid tomato;\n  background-color: rgba(255, 99, 71, 0.1);\n}\n\nbutton {\n  background-color: #00bcd4;\n  color: #fff;\n  border: none;\n  cursor: pointer;\n  border-radius: 4px;\n  height: 36px;\n}\n\nbutton:disabled {\n  background-color: #8b8b8b;\n  cursor: not-allowed;\n}\n\ninput:disabled {\n  cursor: not-allowed;\n}\n\nsection {\n  width: 100%;\n}\n\n#app {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-items: center;\n  width: 390px;\n  padding: 52px 16px;\n  gap: 32px;\n}\n\nheader {\n  font-family: 'Roboto';\n  font-style: normal;\n  font-weight: 600;\n  font-size: 34px;\n  text-align: center;\n  margin-bottom: -16px;\n}\n\nlabel {\n  display: block;\n  text-align: start;\n  margin-bottom: 8px;\n}\n\n.items-center {\n  display: flex;\n  align-items: center;\n  width: 100%;\n}\n\n.space-between {\n  display: flex;\n  justify-content: space-between;\n  width: 100%;\n}\n\n#lotto-result-container {\n  display: flex;\n  width: 310px;\n  max-height: 400px;\n  overflow-y: scroll;\n  flex-wrap: wrap;\n  font-size: 32px;\n  gap: 8px;\n}\n\n#lotto-result-container::-webkit-scrollbar {\n  width: 3px;\n}\n\n#lotto-result-container::-webkit-scrollbar-track {\n  background-color: #00bbd413;\n}\n\n#lotto-result-container::-webkit-scrollbar-thumb {\n  box-shadow: inset 0 0 4px #00bbd478;\n}\n\n.lotto-numbers-container {\n  font-size: 16px;\n  margin-left: 8px;\n}\n\n.winning-number-input {\n  text-align: center;\n  width: 34px;\n  height: 36px;\n}\n\n#check-result-button {\n  width: 100%;\n}\n\n#purchase-money-form {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n}\n\n#purchase-money-input {\n  width: 310px;\n  height: 36px;\n}\n\ninput {\n  border: 1px solid #b4b4b4;\n  border-radius: 4px;\n}\n\n#purchase-money-button {\n  margin-top: 2px;\n  width: 56px;\n}\n\n#winning-number-form {\n  width: 100%;\n}\n\n#check-result-button {\n  margin-top: 24px;\n}\n\n.wrapper {\n  display: grid;\n  grid-template-columns: repeat(3, 106px);\n  grid-template-rows: repeat(6, 40px);\n  grid-gap: 0;\n  border-top: 1px solid #dcdcdc;\n  margin-bottom: 16px;\n}\n\n.wrapper > div {\n  height: 40px;\n  border-bottom: 1px solid #dcdcdc;\n  line-height: 40px;\n  text-align: center;\n}\n\n#purchase-money-input-alert {\n  width: 316px;\n  text-align: center;\n  color: tomato;\n  font-size: 13px;\n  margin: 6px;\n}\n\n#winning-number-input-alert {\n  display: inline-block;\n  width: 100%;\n  text-align: center;\n  color: tomato;\n  font-size: 14px;\n  margin: 6px;\n}\n", "",{"version":3,"sources":["webpack://./src/css/index.css"],"names":[],"mappings":"AAAA;;EAEE,wBAAwB;EACxB,SAAS;AACX;;AAEA;EACE,aAAa;EACb,uBAAuB;AACzB;;AAEA;EACE,yCAAyC;EACzC,yBAAyB;EACzB,aAAa;AACf;;AAEA;EACE,wBAAwB;EACxB,wCAAwC;AAC1C;;AAEA;EACE,wBAAwB;EACxB,wCAAwC;AAC1C;;AAEA;EACE,yBAAyB;EACzB,WAAW;EACX,YAAY;EACZ,eAAe;EACf,kBAAkB;EAClB,YAAY;AACd;;AAEA;EACE,yBAAyB;EACzB,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,WAAW;AACb;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,uBAAuB;EACvB,mBAAmB;EACnB,YAAY;EACZ,kBAAkB;EAClB,SAAS;AACX;;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,gBAAgB;EAChB,eAAe;EACf,kBAAkB;EAClB,oBAAoB;AACtB;;AAEA;EACE,cAAc;EACd,iBAAiB;EACjB,kBAAkB;AACpB;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,WAAW;AACb;;AAEA;EACE,aAAa;EACb,8BAA8B;EAC9B,WAAW;AACb;;AAEA;EACE,aAAa;EACb,YAAY;EACZ,iBAAiB;EACjB,kBAAkB;EAClB,eAAe;EACf,eAAe;EACf,QAAQ;AACV;;AAEA;EACE,UAAU;AACZ;;AAEA;EACE,2BAA2B;AAC7B;;AAEA;EACE,mCAAmC;AACrC;;AAEA;EACE,eAAe;EACf,gBAAgB;AAClB;;AAEA;EACE,kBAAkB;EAClB,WAAW;EACX,YAAY;AACd;;AAEA;EACE,WAAW;AACb;;AAEA;EACE,WAAW;EACX,aAAa;EACb,sBAAsB;EACtB,uBAAuB;AACzB;;AAEA;EACE,YAAY;EACZ,YAAY;AACd;;AAEA;EACE,yBAAyB;EACzB,kBAAkB;AACpB;;AAEA;EACE,eAAe;EACf,WAAW;AACb;;AAEA;EACE,WAAW;AACb;;AAEA;EACE,gBAAgB;AAClB;;AAEA;EACE,aAAa;EACb,uCAAuC;EACvC,mCAAmC;EACnC,WAAW;EACX,6BAA6B;EAC7B,mBAAmB;AACrB;;AAEA;EACE,YAAY;EACZ,gCAAgC;EAChC,iBAAiB;EACjB,kBAAkB;AACpB;;AAEA;EACE,YAAY;EACZ,kBAAkB;EAClB,aAAa;EACb,eAAe;EACf,WAAW;AACb;;AAEA;EACE,qBAAqB;EACrB,WAAW;EACX,kBAAkB;EAClB,aAAa;EACb,eAAe;EACf,WAAW;AACb","sourcesContent":["input[type='number']::-webkit-outer-spin-button,\ninput[type='number']::-webkit-inner-spin-button {\n  -webkit-appearance: none;\n  margin: 0;\n}\n\nbody {\n  display: flex;\n  justify-content: center;\n}\n\ninput:focus {\n  background-color: rgba(63, 207, 226, 0.1);\n  border: 1px solid #00bcd4;\n  outline: none;\n}\n\n.input-alert {\n  border: 1px solid tomato;\n  background-color: rgba(255, 99, 71, 0.1);\n}\n\n.input-alert:focus {\n  border: 1px solid tomato;\n  background-color: rgba(255, 99, 71, 0.1);\n}\n\nbutton {\n  background-color: #00bcd4;\n  color: #fff;\n  border: none;\n  cursor: pointer;\n  border-radius: 4px;\n  height: 36px;\n}\n\nbutton:disabled {\n  background-color: #8b8b8b;\n  cursor: not-allowed;\n}\n\ninput:disabled {\n  cursor: not-allowed;\n}\n\nsection {\n  width: 100%;\n}\n\n#app {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-items: center;\n  width: 390px;\n  padding: 52px 16px;\n  gap: 32px;\n}\n\nheader {\n  font-family: 'Roboto';\n  font-style: normal;\n  font-weight: 600;\n  font-size: 34px;\n  text-align: center;\n  margin-bottom: -16px;\n}\n\nlabel {\n  display: block;\n  text-align: start;\n  margin-bottom: 8px;\n}\n\n.items-center {\n  display: flex;\n  align-items: center;\n  width: 100%;\n}\n\n.space-between {\n  display: flex;\n  justify-content: space-between;\n  width: 100%;\n}\n\n#lotto-result-container {\n  display: flex;\n  width: 310px;\n  max-height: 400px;\n  overflow-y: scroll;\n  flex-wrap: wrap;\n  font-size: 32px;\n  gap: 8px;\n}\n\n#lotto-result-container::-webkit-scrollbar {\n  width: 3px;\n}\n\n#lotto-result-container::-webkit-scrollbar-track {\n  background-color: #00bbd413;\n}\n\n#lotto-result-container::-webkit-scrollbar-thumb {\n  box-shadow: inset 0 0 4px #00bbd478;\n}\n\n.lotto-numbers-container {\n  font-size: 16px;\n  margin-left: 8px;\n}\n\n.winning-number-input {\n  text-align: center;\n  width: 34px;\n  height: 36px;\n}\n\n#check-result-button {\n  width: 100%;\n}\n\n#purchase-money-form {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n}\n\n#purchase-money-input {\n  width: 310px;\n  height: 36px;\n}\n\ninput {\n  border: 1px solid #b4b4b4;\n  border-radius: 4px;\n}\n\n#purchase-money-button {\n  margin-top: 2px;\n  width: 56px;\n}\n\n#winning-number-form {\n  width: 100%;\n}\n\n#check-result-button {\n  margin-top: 24px;\n}\n\n.wrapper {\n  display: grid;\n  grid-template-columns: repeat(3, 106px);\n  grid-template-rows: repeat(6, 40px);\n  grid-gap: 0;\n  border-top: 1px solid #dcdcdc;\n  margin-bottom: 16px;\n}\n\n.wrapper > div {\n  height: 40px;\n  border-bottom: 1px solid #dcdcdc;\n  line-height: 40px;\n  text-align: center;\n}\n\n#purchase-money-input-alert {\n  width: 316px;\n  text-align: center;\n  color: tomato;\n  font-size: 13px;\n  margin: 6px;\n}\n\n#winning-number-input-alert {\n  display: inline-block;\n  width: 100%;\n  text-align: center;\n  color: tomato;\n  font-size: 14px;\n  margin: 6px;\n}\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ":root {\n  --main-color: #00bcd4;\n  --alert-color: tomato;\n  --disabled-color: #8b8b8b;\n}\n\ninput[type='number']::-webkit-outer-spin-button,\ninput[type='number']::-webkit-inner-spin-button {\n  -webkit-appearance: none;\n  margin: 0;\n}\n\nbody {\n  display: flex;\n  justify-content: center;\n}\n\ninput:focus {\n  background-color: rgba(63, 207, 226, 0.1);\n  border: 1px solid var(--main-color);\n  outline: none;\n}\n\n.input-alert {\n  border: 1px solid var(--alert-color);\n  background-color: rgba(255, 99, 71, 0.1);\n}\n\n.input-alert:focus {\n  border: 1px solid var(--alert-color);\n  background-color: rgba(255, 99, 71, 0.1);\n}\n\nbutton {\n  background-color: var(--main-color);\n  color: #fff;\n  border: none;\n  cursor: pointer;\n  border-radius: 4px;\n  height: 36px;\n}\n\nbutton:disabled {\n  background-color: var(--disabled-color);\n  cursor: not-allowed;\n}\n\ninput:disabled {\n  cursor: not-allowed;\n}\n\nsection {\n  width: 100%;\n}\n\n#app {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-items: center;\n  width: 390px;\n  padding: 52px 16px;\n  gap: 32px;\n}\n\nheader {\n  font-family: 'Roboto';\n  font-style: normal;\n  font-weight: 600;\n  font-size: 34px;\n  text-align: center;\n  margin-bottom: -16px;\n}\n\nlabel {\n  display: block;\n  text-align: start;\n  margin-bottom: 8px;\n}\n\n.items-center {\n  display: flex;\n  align-items: center;\n  width: 100%;\n}\n\n.space-between {\n  display: flex;\n  justify-content: space-between;\n  width: 100%;\n}\n\n#lotto-result-container {\n  display: flex;\n  width: 310px;\n  max-height: 400px;\n  overflow-y: scroll;\n  flex-wrap: wrap;\n  font-size: 32px;\n  gap: 8px;\n}\n\n#lotto-result-container::-webkit-scrollbar {\n  width: 3px;\n}\n\n#lotto-result-container::-webkit-scrollbar-track {\n  background-color: #00bbd413;\n}\n\n#lotto-result-container::-webkit-scrollbar-thumb {\n  box-shadow: inset 0 0 4px #00bbd478;\n}\n\n.lotto-numbers-container {\n  font-size: 16px;\n  margin-left: 8px;\n}\n\n.winning-number-input {\n  text-align: center;\n  width: 34px;\n  height: 36px;\n}\n\n#check-result-button {\n  width: 100%;\n}\n\n#purchase-money-form {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n}\n\n#purchase-money-input {\n  width: 310px;\n  height: 36px;\n}\n\ninput {\n  border: 1px solid #b4b4b4;\n  border-radius: 4px;\n}\n\n#purchase-money-button {\n  margin-top: 2px;\n  width: 56px;\n}\n\n#winning-number-form {\n  width: 100%;\n}\n\n#check-result-button {\n  margin-top: 24px;\n}\n\n.wrapper {\n  display: grid;\n  grid-template-columns: repeat(3, 106px);\n  grid-template-rows: repeat(6, 40px);\n  grid-gap: 0;\n  border-top: 1px solid #dcdcdc;\n  margin-bottom: 16px;\n}\n\n.wrapper > div {\n  height: 40px;\n  border-bottom: 1px solid #dcdcdc;\n  line-height: 40px;\n  text-align: center;\n}\n\n#purchase-money-input-alert {\n  width: 316px;\n  text-align: center;\n  color: var(--alert-color);\n  font-size: 13px;\n  margin: 6px;\n}\n\n#winning-number-input-alert {\n  display: inline-block;\n  width: 100%;\n  text-align: center;\n  color: var(--alert-color);\n  font-size: 14px;\n  margin: 6px;\n}\n", "",{"version":3,"sources":["webpack://./src/css/index.css"],"names":[],"mappings":"AAAA;EACE,qBAAqB;EACrB,qBAAqB;EACrB,yBAAyB;AAC3B;;AAEA;;EAEE,wBAAwB;EACxB,SAAS;AACX;;AAEA;EACE,aAAa;EACb,uBAAuB;AACzB;;AAEA;EACE,yCAAyC;EACzC,mCAAmC;EACnC,aAAa;AACf;;AAEA;EACE,oCAAoC;EACpC,wCAAwC;AAC1C;;AAEA;EACE,oCAAoC;EACpC,wCAAwC;AAC1C;;AAEA;EACE,mCAAmC;EACnC,WAAW;EACX,YAAY;EACZ,eAAe;EACf,kBAAkB;EAClB,YAAY;AACd;;AAEA;EACE,uCAAuC;EACvC,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,WAAW;AACb;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,uBAAuB;EACvB,mBAAmB;EACnB,YAAY;EACZ,kBAAkB;EAClB,SAAS;AACX;;AAEA;EACE,qBAAqB;EACrB,kBAAkB;EAClB,gBAAgB;EAChB,eAAe;EACf,kBAAkB;EAClB,oBAAoB;AACtB;;AAEA;EACE,cAAc;EACd,iBAAiB;EACjB,kBAAkB;AACpB;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,WAAW;AACb;;AAEA;EACE,aAAa;EACb,8BAA8B;EAC9B,WAAW;AACb;;AAEA;EACE,aAAa;EACb,YAAY;EACZ,iBAAiB;EACjB,kBAAkB;EAClB,eAAe;EACf,eAAe;EACf,QAAQ;AACV;;AAEA;EACE,UAAU;AACZ;;AAEA;EACE,2BAA2B;AAC7B;;AAEA;EACE,mCAAmC;AACrC;;AAEA;EACE,eAAe;EACf,gBAAgB;AAClB;;AAEA;EACE,kBAAkB;EAClB,WAAW;EACX,YAAY;AACd;;AAEA;EACE,WAAW;AACb;;AAEA;EACE,WAAW;EACX,aAAa;EACb,sBAAsB;EACtB,uBAAuB;AACzB;;AAEA;EACE,YAAY;EACZ,YAAY;AACd;;AAEA;EACE,yBAAyB;EACzB,kBAAkB;AACpB;;AAEA;EACE,eAAe;EACf,WAAW;AACb;;AAEA;EACE,WAAW;AACb;;AAEA;EACE,gBAAgB;AAClB;;AAEA;EACE,aAAa;EACb,uCAAuC;EACvC,mCAAmC;EACnC,WAAW;EACX,6BAA6B;EAC7B,mBAAmB;AACrB;;AAEA;EACE,YAAY;EACZ,gCAAgC;EAChC,iBAAiB;EACjB,kBAAkB;AACpB;;AAEA;EACE,YAAY;EACZ,kBAAkB;EAClB,yBAAyB;EACzB,eAAe;EACf,WAAW;AACb;;AAEA;EACE,qBAAqB;EACrB,WAAW;EACX,kBAAkB;EAClB,yBAAyB;EACzB,eAAe;EACf,WAAW;AACb","sourcesContent":[":root {\n  --main-color: #00bcd4;\n  --alert-color: tomato;\n  --disabled-color: #8b8b8b;\n}\n\ninput[type='number']::-webkit-outer-spin-button,\ninput[type='number']::-webkit-inner-spin-button {\n  -webkit-appearance: none;\n  margin: 0;\n}\n\nbody {\n  display: flex;\n  justify-content: center;\n}\n\ninput:focus {\n  background-color: rgba(63, 207, 226, 0.1);\n  border: 1px solid var(--main-color);\n  outline: none;\n}\n\n.input-alert {\n  border: 1px solid var(--alert-color);\n  background-color: rgba(255, 99, 71, 0.1);\n}\n\n.input-alert:focus {\n  border: 1px solid var(--alert-color);\n  background-color: rgba(255, 99, 71, 0.1);\n}\n\nbutton {\n  background-color: var(--main-color);\n  color: #fff;\n  border: none;\n  cursor: pointer;\n  border-radius: 4px;\n  height: 36px;\n}\n\nbutton:disabled {\n  background-color: var(--disabled-color);\n  cursor: not-allowed;\n}\n\ninput:disabled {\n  cursor: not-allowed;\n}\n\nsection {\n  width: 100%;\n}\n\n#app {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-items: center;\n  width: 390px;\n  padding: 52px 16px;\n  gap: 32px;\n}\n\nheader {\n  font-family: 'Roboto';\n  font-style: normal;\n  font-weight: 600;\n  font-size: 34px;\n  text-align: center;\n  margin-bottom: -16px;\n}\n\nlabel {\n  display: block;\n  text-align: start;\n  margin-bottom: 8px;\n}\n\n.items-center {\n  display: flex;\n  align-items: center;\n  width: 100%;\n}\n\n.space-between {\n  display: flex;\n  justify-content: space-between;\n  width: 100%;\n}\n\n#lotto-result-container {\n  display: flex;\n  width: 310px;\n  max-height: 400px;\n  overflow-y: scroll;\n  flex-wrap: wrap;\n  font-size: 32px;\n  gap: 8px;\n}\n\n#lotto-result-container::-webkit-scrollbar {\n  width: 3px;\n}\n\n#lotto-result-container::-webkit-scrollbar-track {\n  background-color: #00bbd413;\n}\n\n#lotto-result-container::-webkit-scrollbar-thumb {\n  box-shadow: inset 0 0 4px #00bbd478;\n}\n\n.lotto-numbers-container {\n  font-size: 16px;\n  margin-left: 8px;\n}\n\n.winning-number-input {\n  text-align: center;\n  width: 34px;\n  height: 36px;\n}\n\n#check-result-button {\n  width: 100%;\n}\n\n#purchase-money-form {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n}\n\n#purchase-money-input {\n  width: 310px;\n  height: 36px;\n}\n\ninput {\n  border: 1px solid #b4b4b4;\n  border-radius: 4px;\n}\n\n#purchase-money-button {\n  margin-top: 2px;\n  width: 56px;\n}\n\n#winning-number-form {\n  width: 100%;\n}\n\n#check-result-button {\n  margin-top: 24px;\n}\n\n.wrapper {\n  display: grid;\n  grid-template-columns: repeat(3, 106px);\n  grid-template-rows: repeat(6, 40px);\n  grid-gap: 0;\n  border-top: 1px solid #dcdcdc;\n  margin-bottom: 16px;\n}\n\n.wrapper > div {\n  height: 40px;\n  border-bottom: 1px solid #dcdcdc;\n  line-height: 40px;\n  text-align: center;\n}\n\n#purchase-money-input-alert {\n  width: 316px;\n  text-align: center;\n  color: var(--alert-color);\n  font-size: 13px;\n  margin: 6px;\n}\n\n#winning-number-input-alert {\n  display: inline-block;\n  width: 100%;\n  text-align: center;\n  color: var(--alert-color);\n  font-size: 14px;\n  margin: 6px;\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
