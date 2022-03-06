@@ -109,49 +109,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ CheckWinningLottosController)
 /* harmony export */ });
-/* harmony import */ var _views_CheckWinningLottosView_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../views/CheckWinningLottosView.js */ "./src/js/views/CheckWinningLottosView.js");
-/* harmony import */ var _utils_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/utils.js */ "./src/js/utils/utils.js");
-/* harmony import */ var _constants_constants_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../constants/constants.js */ "./src/js/constants/constants.js");
+/* harmony import */ var _views_WinningLottosModalView_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../views/WinningLottosModalView.js */ "./src/js/views/WinningLottosModalView.js");
+/* harmony import */ var _views_WinningNumbersInputView_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../views/WinningNumbersInputView.js */ "./src/js/views/WinningNumbersInputView.js");
+/* harmony import */ var _utils_utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/utils.js */ "./src/js/utils/utils.js");
+/* harmony import */ var _constants_constants_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../constants/constants.js */ "./src/js/constants/constants.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
-function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
-
-function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
-
-function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
-
-function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
-
-function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
 
 
 
 
 
-
-var _view = /*#__PURE__*/new WeakMap();
 
 var CheckWinningLottosController = /*#__PURE__*/function () {
   function CheckWinningLottosController(lottoMachine) {
     _classCallCheck(this, CheckWinningLottosController);
 
-    _classPrivateFieldInitSpec(this, _view, {
-      writable: true,
-      value: new _views_CheckWinningLottosView_js__WEBPACK_IMPORTED_MODULE_0__["default"]()
-    });
-
     this.machine = lottoMachine;
+    this.inputView = new _views_WinningNumbersInputView_js__WEBPACK_IMPORTED_MODULE_1__["default"]();
+    this.modalView = new _views_WinningLottosModalView_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    this.modalView.bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_2__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_3__.SELECTOR.ID.CHECK_RESULT_BUTTON), 'click', this.handleClickCheckResultButton.bind(this));
+    this.modalView.bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_2__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_3__.SELECTOR.ID.MODAL_CLOSE_BUTTON), 'click', this.handleCloseModal.bind(this));
+    this.modalView.bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_2__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_3__.SELECTOR.ID.MODAL_RETRY_BUTTON), 'click', this.handleRetryButton.bind(this));
+  } // 핸들러
 
-    _classPrivateFieldGet(this, _view).bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.CHECK_RESULT_BUTTON), 'click', this.handleClickCheckResultButton.bind(this));
-
-    _classPrivateFieldGet(this, _view).bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.MODAL_CLOSE_BUTTON), 'click', this.handleCloseModal.bind(this));
-
-    _classPrivateFieldGet(this, _view).bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.MODAL_RETRY_BUTTON), 'click', this.handleRetryButton.bind(this));
-  }
 
   _createClass(CheckWinningLottosController, [{
     key: "handleClickCheckResultButton",
@@ -159,17 +144,13 @@ var CheckWinningLottosController = /*#__PURE__*/function () {
       e.preventDefault();
 
       try {
-        var inputWinningNumbers = _classPrivateFieldGet(this, _view).getInputWinningNumbers();
-
+        var inputWinningNumbers = this.inputView.getInputWinningNumbers();
         var winningNumbers = inputWinningNumbers.splice(0, 6);
         var bonusNumber = inputWinningNumbers[0];
         this.machine.countWinLottos(winningNumbers, bonusNumber);
-
-        _classPrivateFieldGet(this, _view).renderWinLottosCountInModal(this.machine.winLottos, this.machine.winLottosWithBonus);
-
-        _classPrivateFieldGet(this, _view).renderProfitRateInModal((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.changeProfitToProfitRate)(this.machine.getProfit(), this.machine.inputMoney));
-
-        _classPrivateFieldGet(this, _view).openModal();
+        this.modalView.renderWinLottosCountInModal(this.machine.winLottos, this.machine.winLottosWithBonus);
+        this.modalView.renderProfitRateInModal((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_2__.changeProfitToProfitRate)(this.machine.getProfit(), this.machine.inputMoney));
+        this.modalView.toggleModal();
       } catch (error) {
         alert(error.message);
       }
@@ -177,25 +158,18 @@ var CheckWinningLottosController = /*#__PURE__*/function () {
   }, {
     key: "handleCloseModal",
     value: function handleCloseModal() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.MODAL).classList.toggle('show');
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_2__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_3__.SELECTOR.CLASS.MODAL).classList.toggle('show');
       this.machine.resetWinLottos();
     }
   }, {
     key: "handleRetryButton",
     value: function handleRetryButton() {
       this.machine.resetMachine();
-
-      _classPrivateFieldGet(this, _view).closeModal();
-
-      _classPrivateFieldGet(this, _view).ablePurchase();
-
-      _classPrivateFieldGet(this, _view).hideLottoContainers();
-
-      _classPrivateFieldGet(this, _view).clearWinningNumbersInput();
-
-      _classPrivateFieldGet(this, _view).clearMoneyInput();
-
-      _classPrivateFieldGet(this, _view).resetToggle();
+      this.modalView.toggleModal();
+      this.modalView.restartPurchase();
+      this.modalView.clearWinningNumbersInput();
+      this.modalView.clearMoneyInput();
+      this.modalView.resetToggle();
     }
   }]);
 
@@ -225,42 +199,24 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
-function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
-
-function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
-
-function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
-
-function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
-
-function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
 
 
 
-
-
-var _view = /*#__PURE__*/new WeakMap();
 
 var PurchaseLottosController = /*#__PURE__*/function () {
   function PurchaseLottosController(lottoMachine) {
     _classCallCheck(this, PurchaseLottosController);
 
-    _classPrivateFieldInitSpec(this, _view, {
-      writable: true,
-      value: new _views_PurchaseLottosView_js__WEBPACK_IMPORTED_MODULE_0__["default"]()
-    });
-
     this.machine = lottoMachine;
-
-    _classPrivateFieldGet(this, _view).bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.PURCHASE_MONEY_FORM), 'submit', this.handlePurchaseForm.bind(this));
-
-    _classPrivateFieldGet(this, _view).bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.LOTTO_RESULT_TOGGLE), 'click', this.handleResultToggle.bind(this));
+    this.view = new _views_PurchaseLottosView_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    this.view.bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.PURCHASE_MONEY_FORM), 'submit', this.handlePurchaseForm.bind(this));
+    this.view.bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.LOTTO_RESULT_TOGGLE), 'click', this.handleResultToggle.bind(this));
   }
 
   _createClass(PurchaseLottosController, [{
     key: "inputMoney",
     value: function inputMoney() {
-      this.machine.inputMoney = _classPrivateFieldGet(this, _view).getInputMoney();
+      this.machine.inputMoney = this.view.getInputMoney();
     } // 핸들러
 
   }, {
@@ -271,14 +227,9 @@ var PurchaseLottosController = /*#__PURE__*/function () {
       try {
         this.inputMoney();
         this.machine.lottos = this.machine.generateLottos();
-
-        _classPrivateFieldGet(this, _view).renderPurchasedLottosAmountByText(this.machine.lottos);
-
-        _classPrivateFieldGet(this, _view).renderPurchasedLottos(this.machine.lottos);
-
-        _classPrivateFieldGet(this, _view).disablePurchase();
-
-        _classPrivateFieldGet(this, _view).showLottoContainers();
+        this.view.renderPurchasedLottosAmountByText(this.machine.lottos);
+        this.view.renderPurchasedLottos(this.machine.lottos);
+        this.view.stopPurchase();
       } catch (error) {
         alert(error.message);
       }
@@ -286,7 +237,7 @@ var PurchaseLottosController = /*#__PURE__*/function () {
   }, {
     key: "handleResultToggle",
     value: function handleResultToggle() {
-      _classPrivateFieldGet(this, _view).renderPurchasedLottos(this.machine.lottos);
+      this.view.renderPurchasedLottos(this.machine.lottos);
     }
   }]);
 
@@ -511,11 +462,9 @@ var LottoMachine = /*#__PURE__*/function () {
   }, {
     key: "getProfit",
     value: function getProfit() {
-      var profit = 0;
-
-      _classPrivateFieldGet(this, _winLottos).forEach(function (winLottoCount, index) {
-        profit += winLottoCount * _constants_constants_js__WEBPACK_IMPORTED_MODULE_0__.LOTTO.WINNING_PRIZE[index];
-      });
+      var profit = _classPrivateFieldGet(this, _winLottos).reduce(function (acc, winLottoCount, index) {
+        return acc += winLottoCount * _constants_constants_js__WEBPACK_IMPORTED_MODULE_0__.LOTTO.WINNING_PRIZE[index];
+      }, 0);
 
       profit += _classPrivateFieldGet(this, _winLottosWithBonus) * _constants_constants_js__WEBPACK_IMPORTED_MODULE_0__.LOTTO.WINNING_PRIZE_WITH_BONUS;
       return profit;
@@ -659,6 +608,7 @@ function validateInputWinningNumbers(inputWinningNumbers) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "isNumberStartWithZero": () => (/* binding */ isNumberStartWithZero),
 /* harmony export */   "default": () => (/* binding */ validateMoney)
 /* harmony export */ });
 /* harmony import */ var _constants_constants_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../constants/constants.js */ "./src/js/constants/constants.js");
@@ -676,7 +626,14 @@ function isOverLimit(money) {
   return money > _constants_constants_js__WEBPACK_IMPORTED_MODULE_0__.LOTTO.INPUT_LIMIT;
 }
 
+function isNumberStartWithZero(money) {
+  return money.length > 1 && money[0] == 0;
+}
 function validateMoney(money) {
+  if (isNumberStartWithZero(money)) {
+    throw new Error('허용되지 않은 숫자 형식입니다.');
+  }
+
   if (!isOverZero(money)) {
     throw new Error('0원보다 큰 금액을 입력해주세요.');
   }
@@ -692,15 +649,299 @@ function validateMoney(money) {
 
 /***/ }),
 
-/***/ "./src/js/views/CheckWinningLottosView.js":
+/***/ "./src/js/views/PurchaseLottosView.js":
+/*!********************************************!*\
+  !*** ./src/js/views/PurchaseLottosView.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ PurchaseLottosView)
+/* harmony export */ });
+/* harmony import */ var _utils_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/utils.js */ "./src/js/utils/utils.js");
+/* harmony import */ var _constants_constants_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../constants/constants.js */ "./src/js/constants/constants.js");
+/* harmony import */ var _View_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./View.js */ "./src/js/views/View.js");
+/* harmony import */ var _validations_PurchaseLottos_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../validations/PurchaseLottos.js */ "./src/js/validations/PurchaseLottos.js");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+
+
+
+var template = {
+  ticketImg: '<div>🎟️</div>',
+  lottoNumberTemplate: function lottoNumberTemplate(lottoNumber) {
+    return "<div class=\"items-center\">\n              \uD83C\uDF9F\uFE0F\n             <div class=\"lotto-numbers-container\">".concat(lottoNumber, "</div>\n          </div>");
+  },
+  purchaseMessageTemplate: function purchaseMessageTemplate(_ref) {
+    var length = _ref.length;
+    return "\uCD1D ".concat(length, "\uAC1C\uB97C \uAD6C\uB9E4\uD558\uC600\uC2B5\uB2C8\uB2E4.");
+  }
+};
+
+var PurchaseLottosView = /*#__PURE__*/function (_View) {
+  _inherits(PurchaseLottosView, _View);
+
+  var _super = _createSuper(PurchaseLottosView);
+
+  function PurchaseLottosView() {
+    var _this;
+
+    _classCallCheck(this, PurchaseLottosView);
+
+    _this = _super.call(this);
+
+    _this.bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT), 'keyup', _this.handleOnChangeMoneyInput.bind(_assertThisInitialized(_this)));
+
+    return _this;
+  }
+
+  _createClass(PurchaseLottosView, [{
+    key: "getInputMoney",
+    value: function getInputMoney() {
+      if ((0,_validations_PurchaseLottos_js__WEBPACK_IMPORTED_MODULE_3__.isNumberStartWithZero)((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).value)) {
+        throw new Error('허용되지 않는 숫자 형식입니다.');
+      }
+
+      return Number.parseInt((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).value);
+    }
+  }, {
+    key: "renderPurchasedLottos",
+    value: function renderPurchasedLottos(lottos) {
+      this.clearMoneyInput();
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_CONTAINER).replaceChildren();
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.TOGGLE_CHECKBOX).checked ? this.renderPurchasedLottosByNumbers(lottos) : this.renderPurchasedLottosByImage(lottos);
+    }
+  }, {
+    key: "renderPurchasedLottosByImage",
+    value: function renderPurchasedLottosByImage(lottos) {
+      lottos.map(function () {
+        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_CONTAINER).insertAdjacentHTML('beforeEnd', template.ticketImg);
+      });
+    }
+  }, {
+    key: "renderPurchasedLottosByNumbers",
+    value: function renderPurchasedLottosByNumbers(lottos) {
+      lottos.map(function (lotto) {
+        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_CONTAINER).insertAdjacentHTML('beforeEnd', template.lottoNumberTemplate(lotto.numbers.join(', ')));
+      });
+    }
+  }, {
+    key: "renderPurchasedLottosAmountByText",
+    value: function renderPurchasedLottosAmountByText(lottos) {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_SPAN).textContent = template.purchaseMessageTemplate(lottos);
+    }
+  }, {
+    key: "stopPurchase",
+    value: function stopPurchase() {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).disabled = true;
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_BUTTON).disabled = true;
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_SECTION).hidden = false;
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.WINNING_NUMBER_FORM).hidden = false;
+    }
+  }, {
+    key: "clearMoneyInput",
+    value: function clearMoneyInput() {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).classList.remove('input-alert');
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT_ALERT).textContent = '';
+    } // 핸들러
+
+  }, {
+    key: "handleOnChangeMoneyInput",
+    value: function handleOnChangeMoneyInput(event) {
+      try {
+        (0,_validations_PurchaseLottos_js__WEBPACK_IMPORTED_MODULE_3__["default"])(event.target.value);
+        this.clearMoneyInput();
+      } catch (error) {
+        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).classList.add('input-alert');
+        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT_ALERT).textContent = error.message;
+      }
+
+      if (event.target.value.length === 0) {
+        this.clearMoneyInput();
+      }
+    }
+  }]);
+
+  return PurchaseLottosView;
+}(_View_js__WEBPACK_IMPORTED_MODULE_2__["default"]);
+
+
+
+/***/ }),
+
+/***/ "./src/js/views/View.js":
+/*!******************************!*\
+  !*** ./src/js/views/View.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ View)
+/* harmony export */ });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+var View = /*#__PURE__*/function () {
+  function View() {
+    _classCallCheck(this, View);
+  }
+
+  _createClass(View, [{
+    key: "bindEvent",
+    value: function bindEvent(target, eventName, handler) {
+      target.addEventListener(eventName, handler);
+    }
+  }]);
+
+  return View;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/js/views/WinningLottosModalView.js":
 /*!************************************************!*\
-  !*** ./src/js/views/CheckWinningLottosView.js ***!
+  !*** ./src/js/views/WinningLottosModalView.js ***!
   \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ CheckWinningLottosView)
+/* harmony export */   "default": () => (/* binding */ WinningLottosView)
+/* harmony export */ });
+/* harmony import */ var _View_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./View.js */ "./src/js/views/View.js");
+/* harmony import */ var _utils_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/utils.js */ "./src/js/utils/utils.js");
+/* harmony import */ var _constants_constants_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../constants/constants.js */ "./src/js/constants/constants.js");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+
+
+var template = {
+  showProfitMessage: function showProfitMessage(profitRate) {
+    return "\uB2F9\uC2E0\uC758 \uCD1D \uC218\uC775\uB960\uC740 ".concat(profitRate, "%\uC785\uB2C8\uB2E4.");
+  }
+};
+
+var WinningLottosView = /*#__PURE__*/function (_View) {
+  _inherits(WinningLottosView, _View);
+
+  var _super = _createSuper(WinningLottosView);
+
+  function WinningLottosView() {
+    _classCallCheck(this, WinningLottosView);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(WinningLottosView, [{
+    key: "restartPurchase",
+    value: function restartPurchase() {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.LOTTO_RESULT_SECTION).hidden = true;
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.WINNING_NUMBER_FORM).hidden = true;
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.PURCHASE_MONEY_INPUT).disabled = false;
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.PURCHASE_MONEY_BUTTON).disabled = false;
+    }
+  }, {
+    key: "clearWinningNumbersInput",
+    value: function clearWinningNumbersInput() {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT).forEach(function (element) {
+        return element.value = '';
+      });
+    }
+  }, {
+    key: "clearMoneyInput",
+    value: function clearMoneyInput() {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.PURCHASE_MONEY_INPUT).value = '';
+    }
+  }, {
+    key: "resetToggle",
+    value: function resetToggle() {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.TOGGLE_CHECKBOX).checked = false;
+    }
+  }, {
+    key: "toggleModal",
+    value: function toggleModal() {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.MODAL).classList.toggle('show');
+    }
+  }, {
+    key: "renderWinLottosCountInModal",
+    value: function renderWinLottosCountInModal(winLottos, winLottosWithBonus) {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.COINCIDE_COUNT).forEach(function (element, index) {
+        element.textContent = "".concat(winLottos[index + 3], "\uAC1C");
+      });
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.COINCIDE_COUNT_BONUS).textContent = "".concat(winLottosWithBonus, "\uAC1C");
+    }
+  }, {
+    key: "renderProfitRateInModal",
+    value: function renderProfitRateInModal(profitRate) {
+      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.SHOW_PROFIT_RATE).textContent = template.showProfitMessage(profitRate);
+    }
+  }]);
+
+  return WinningLottosView;
+}(_View_js__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+
+
+/***/ }),
+
+/***/ "./src/js/views/WinningNumbersInputView.js":
+/*!*************************************************!*\
+  !*** ./src/js/views/WinningNumbersInputView.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ WinningNumbersInputView)
 /* harmony export */ });
 /* harmony import */ var _View_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./View.js */ "./src/js/views/View.js");
 /* harmony import */ var _utils_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/utils.js */ "./src/js/utils/utils.js");
@@ -732,21 +973,16 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
-var template = {
-  showProfitMessage: function showProfitMessage(profitRate) {
-    return "\uB2F9\uC2E0\uC758 \uCD1D \uC218\uC775\uB960\uC740 ".concat(profitRate, "%\uC785\uB2C8\uB2E4.");
-  }
-};
 
-var CheckWinningLottosView = /*#__PURE__*/function (_View) {
-  _inherits(CheckWinningLottosView, _View);
+var WinningNumbersInputView = /*#__PURE__*/function (_View) {
+  _inherits(WinningNumbersInputView, _View);
 
-  var _super = _createSuper(CheckWinningLottosView);
+  var _super = _createSuper(WinningNumbersInputView);
 
-  function CheckWinningLottosView() {
+  function WinningNumbersInputView() {
     var _this;
 
-    _classCallCheck(this, CheckWinningLottosView);
+    _classCallCheck(this, WinningNumbersInputView);
 
     _this = _super.call(this);
 
@@ -759,7 +995,7 @@ var CheckWinningLottosView = /*#__PURE__*/function (_View) {
     return _this;
   }
 
-  _createClass(CheckWinningLottosView, [{
+  _createClass(WinningNumbersInputView, [{
     key: "getInputWinningNumbers",
     value: function getInputWinningNumbers() {
       var inputWinningNumbers = [];
@@ -802,29 +1038,6 @@ var CheckWinningLottosView = /*#__PURE__*/function (_View) {
       });
     }
   }, {
-    key: "openModal",
-    value: function openModal() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.MODAL).classList.toggle('show');
-    }
-  }, {
-    key: "closeModal",
-    value: function closeModal() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.MODAL).classList.toggle('show');
-    }
-  }, {
-    key: "renderWinLottosCountInModal",
-    value: function renderWinLottosCountInModal(winLottos, winLottosWithBonus) {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.COINCIDE_COUNT).forEach(function (element, index) {
-        element.textContent = "".concat(winLottos[index + 3], "\uAC1C");
-      });
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.COINCIDE_COUNT_BONUS).textContent = "".concat(winLottosWithBonus, "\uAC1C");
-    }
-  }, {
-    key: "renderProfitRateInModal",
-    value: function renderProfitRateInModal(profitRate) {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.SHOW_PROFIT_RATE).textContent = template.showProfitMessage(profitRate);
-    }
-  }, {
     key: "showError",
     value: function showError(elements, duplicatedLottosMap) {
       var _this2 = this;
@@ -838,35 +1051,6 @@ var CheckWinningLottosView = /*#__PURE__*/function (_View) {
           element.classList.add('input-alert');
         }
       });
-    }
-  }, {
-    key: "hideLottoContainers",
-    value: function hideLottoContainers() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.LOTTO_RESULT_SECTION).hidden = true;
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.WINNING_NUMBER_FORM).hidden = true;
-    }
-  }, {
-    key: "ablePurchase",
-    value: function ablePurchase() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.PURCHASE_MONEY_INPUT).disabled = false;
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.PURCHASE_MONEY_BUTTON).disabled = false;
-    }
-  }, {
-    key: "clearWinningNumbersInput",
-    value: function clearWinningNumbersInput() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.CLASS.WINNING_NUMBER_INPUT).forEach(function (element) {
-        return element.value = '';
-      });
-    }
-  }, {
-    key: "clearMoneyInput",
-    value: function clearMoneyInput() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.PURCHASE_MONEY_INPUT).value = '';
-    }
-  }, {
-    key: "resetToggle",
-    value: function resetToggle() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_2__.SELECTOR.ID.TOGGLE_CHECKBOX).checked = false;
     } // 핸들러
 
   }, {
@@ -947,185 +1131,8 @@ var CheckWinningLottosView = /*#__PURE__*/function (_View) {
     }
   }]);
 
-  return CheckWinningLottosView;
+  return WinningNumbersInputView;
 }(_View_js__WEBPACK_IMPORTED_MODULE_0__["default"]);
-
-
-
-/***/ }),
-
-/***/ "./src/js/views/PurchaseLottosView.js":
-/*!********************************************!*\
-  !*** ./src/js/views/PurchaseLottosView.js ***!
-  \********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ PurchaseLottosView)
-/* harmony export */ });
-/* harmony import */ var _utils_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/utils.js */ "./src/js/utils/utils.js");
-/* harmony import */ var _constants_constants_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../constants/constants.js */ "./src/js/constants/constants.js");
-/* harmony import */ var _View_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./View.js */ "./src/js/views/View.js");
-/* harmony import */ var _validations_PurchaseLottos_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../validations/PurchaseLottos.js */ "./src/js/validations/PurchaseLottos.js");
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-
-
-
-
-var template = {
-  ticketImg: "<div>🎟️</div>",
-  lottoNumberTemplate: function lottoNumberTemplate(lottoNumber) {
-    return "<div class=\"items-center\">\n              \uD83C\uDF9F\uFE0F\n             <div class=\"lotto-numbers-container\">".concat(lottoNumber, "</div>\n          </div>");
-  },
-  purchaseMessageTemplate: function purchaseMessageTemplate(_ref) {
-    var length = _ref.length;
-    return "\uCD1D ".concat(length, "\uAC1C\uB97C \uAD6C\uB9E4\uD558\uC600\uC2B5\uB2C8\uB2E4.");
-  }
-};
-
-var PurchaseLottosView = /*#__PURE__*/function (_View) {
-  _inherits(PurchaseLottosView, _View);
-
-  var _super = _createSuper(PurchaseLottosView);
-
-  function PurchaseLottosView() {
-    var _this;
-
-    _classCallCheck(this, PurchaseLottosView);
-
-    _this = _super.call(this);
-
-    _this.bindEvent((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT), "keyup", _this.handleOnChangeMoneyInput.bind(_assertThisInitialized(_this)));
-
-    return _this;
-  }
-
-  _createClass(PurchaseLottosView, [{
-    key: "getInputMoney",
-    value: function getInputMoney() {
-      return Number.parseInt((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).value);
-    }
-  }, {
-    key: "renderPurchasedLottos",
-    value: function renderPurchasedLottos(lottos) {
-      this.clearMoneyInput();
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_CONTAINER).replaceChildren();
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.TOGGLE_CHECKBOX).checked ? this.renderPurchasedLottosByNumbers(lottos) : this.renderPurchasedLottosByImage(lottos);
-    }
-  }, {
-    key: "renderPurchasedLottosByImage",
-    value: function renderPurchasedLottosByImage(lottos) {
-      lottos.map(function () {
-        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_CONTAINER).insertAdjacentHTML("beforeEnd", template.ticketImg);
-      });
-    }
-  }, {
-    key: "renderPurchasedLottosByNumbers",
-    value: function renderPurchasedLottosByNumbers(lottos) {
-      lottos.map(function (lotto) {
-        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_CONTAINER).insertAdjacentHTML("beforeEnd", template.lottoNumberTemplate(lotto.numbers.join(", ")));
-      });
-    }
-  }, {
-    key: "renderPurchasedLottosAmountByText",
-    value: function renderPurchasedLottosAmountByText(lottos) {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_SPAN).textContent = template.purchaseMessageTemplate(lottos);
-    }
-  }, {
-    key: "disablePurchase",
-    value: function disablePurchase() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).disabled = true;
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_BUTTON).disabled = true;
-    }
-  }, {
-    key: "showLottoContainers",
-    value: function showLottoContainers() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.LOTTO_RESULT_SECTION).hidden = false;
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.WINNING_NUMBER_FORM).hidden = false;
-    }
-  }, {
-    key: "clearMoneyInput",
-    value: function clearMoneyInput() {
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).classList.remove("input-alert");
-      (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT_ALERT).textContent = "";
-    } // 핸들러
-
-  }, {
-    key: "handleOnChangeMoneyInput",
-    value: function handleOnChangeMoneyInput(event) {
-      try {
-        (0,_validations_PurchaseLottos_js__WEBPACK_IMPORTED_MODULE_3__["default"])(event.target.value);
-        this.clearMoneyInput();
-      } catch (error) {
-        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT).classList.add("input-alert");
-        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.$)(_constants_constants_js__WEBPACK_IMPORTED_MODULE_1__.SELECTOR.ID.PURCHASE_MONEY_INPUT_ALERT).textContent = error.message;
-      }
-
-      if (event.target.value.length === 0) {
-        this.clearMoneyInput();
-      }
-    }
-  }]);
-
-  return PurchaseLottosView;
-}(_View_js__WEBPACK_IMPORTED_MODULE_2__["default"]);
-
-
-
-/***/ }),
-
-/***/ "./src/js/views/View.js":
-/*!******************************!*\
-  !*** ./src/js/views/View.js ***!
-  \******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ View)
-/* harmony export */ });
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-var View = /*#__PURE__*/function () {
-  function View() {
-    _classCallCheck(this, View);
-  }
-
-  _createClass(View, [{
-    key: "bindEvent",
-    value: function bindEvent(target, eventName, handler) {
-      target.addEventListener(eventName, handler);
-    }
-  }]);
-
-  return View;
-}();
 
 
 
