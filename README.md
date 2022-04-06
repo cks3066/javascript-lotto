@@ -11,21 +11,16 @@
   <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square"/>
 </p>
 
-## ⚙️ Before Started
+## 데모페이지
 
-#### 개발 환경 가이드
+[행운의 로또 미션 - 데모 페이지](https://cks3066.github.io/javascript-lotto/)
 
-개발 중에는 아래 명령어를 사용하여 webpack dev server를 띄워 현재 개발 중인 어플리케이션을 확인할 수 있습니다.
+</div>
+<br>
 
-```
-npm run start
-```
+## 구조도
 
-별도로 빌드를 해야 한다면 아래 명령어를 사용해주세요
-
-```
-npm run build
-```
+<img width="700" alt="스크린샷 2022-03-04 17 07 46" src="https://user-images.githubusercontent.com/62434898/156724274-a55796a4-535d-4633-9f2c-f7eec4bd7801.png">
 
 <br>
 
